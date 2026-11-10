@@ -94,7 +94,24 @@ class LosferService(
         } else {
             listOf(provider) + settings.providers
         }
-        return settings.copy(providers = providers)
+
+        // 之前没有可用模型时，顺手把默认聊天模型指向 LOSFER 的模型，接入后即可直接对话
+        val hasValidChatModel = settings.providers.any { p -> p.models.any { it.id == settings.chatModelId } }
+        val defaultChatModel = models
+            .filter { it.type == ModelType.CHAT }
+            .let { list ->
+                PREFERRED_MODEL_IDS.firstNotNullOfOrNull { id -> list.find { it.modelId == id } }
+                    ?: list.firstOrNull()
+            }
+
+        return settings.copy(
+            providers = providers,
+            chatModelId = if (!hasValidChatModel && defaultChatModel != null) {
+                defaultChatModel.id
+            } else {
+                settings.chatModelId
+            },
+        )
     }
 
     private fun guessModelType(modelId: String): ModelType {
@@ -127,6 +144,16 @@ class LosferService(
 
         private val IMAGE_MODEL_HINTS = listOf(
             "image", "imagine", "banana", "flux", "dall-e", "dalle", "seedream", "gpt-image",
+        )
+
+        /** 接入后默认选中的模型，优先 LOSFER 自家模型 */
+        private val PREFERRED_MODEL_IDS = listOf(
+            "losfer-v1.0-pro",
+            "losfer-v1.0-flash",
+            "gpt-6.1-sol",
+            "claude-sonnet-5",
+            "gemini-3.8-flash",
+            "deepseek-v4-pro",
         )
     }
 }

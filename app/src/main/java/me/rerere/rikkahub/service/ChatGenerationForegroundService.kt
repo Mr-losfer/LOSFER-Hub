@@ -29,8 +29,8 @@ private const val TAG = "ChatGenerationFgs"
  */
 class ChatGenerationForegroundService : Service() {
     companion object {
-        private const val ACTION_ACQUIRE = "me.rerere.rikkahub.action.CHAT_GENERATION_ACQUIRE"
-        private const val ACTION_RELEASE = "me.rerere.rikkahub.action.CHAT_GENERATION_RELEASE"
+        private const val ACTION_ACQUIRE = "cn.losfer.aihub.action.CHAT_GENERATION_ACQUIRE"
+        private const val ACTION_RELEASE = "cn.losfer.aihub.action.CHAT_GENERATION_RELEASE"
         private const val EXTRA_GENERATION_ID = "generation_id"
         private const val EXTRA_CONVERSATION_ID = "conversation_id"
 

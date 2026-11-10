@@ -25,8 +25,8 @@ private const val TAG = "MediaCreationFgs"
  */
 class MediaCreationForegroundService : Service() {
     companion object {
-        private const val ACTION_ACQUIRE = "me.rerere.rikkahub.action.MEDIA_CREATION_ACQUIRE"
-        private const val ACTION_RELEASE = "me.rerere.rikkahub.action.MEDIA_CREATION_RELEASE"
+        private const val ACTION_ACQUIRE = "cn.losfer.aihub.action.MEDIA_CREATION_ACQUIRE"
+        private const val ACTION_RELEASE = "cn.losfer.aihub.action.MEDIA_CREATION_RELEASE"
         private const val EXTRA_RECORD_ID = "record_id"
         private const val EXTRA_SESSION_ID = "session_id"
 

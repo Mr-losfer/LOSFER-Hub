@@ -25,8 +25,8 @@ private const val TAG = "BackgroundShellFgs"
  */
 class BackgroundShellForegroundService : Service() {
     companion object {
-        private const val ACTION_ACQUIRE = "me.rerere.rikkahub.action.BACKGROUND_SHELL_ACQUIRE"
-        private const val ACTION_RELEASE = "me.rerere.rikkahub.action.BACKGROUND_SHELL_RELEASE"
+        private const val ACTION_ACQUIRE = "cn.losfer.aihub.action.BACKGROUND_SHELL_ACQUIRE"
+        private const val ACTION_RELEASE = "cn.losfer.aihub.action.BACKGROUND_SHELL_RELEASE"
         private const val EXTRA_TASK_ID = "task_id"
         private const val EXTRA_CONVERSATION_ID = "conversation_id"
 

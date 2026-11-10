@@ -19,7 +19,7 @@
         android:shortcutShortLabel="@string/translator_page_title"
         android:shortcutLongLabel="@string/translator_page_title">
         <intent
-            android:action="me.rerere.rikkahub.action.TRANSLATE"
+            android:action="cn.losfer.aihub.action.TRANSLATE"
             android:targetClass="me.rerere.rikkahub.RouteActivity" />
     </shortcut>
     <shortcut
@@ -29,7 +29,7 @@
         android:shortcutShortLabel="@string/shortcut_media_creation"
         android:shortcutLongLabel="@string/shortcut_media_creation">
         <intent
-            android:action="me.rerere.rikkahub.action.MEDIA_CREATION"
+            android:action="cn.losfer.aihub.action.MEDIA_CREATION"
             android:targetClass="me.rerere.rikkahub.RouteActivity" />
     </shortcut>
 </shortcuts>

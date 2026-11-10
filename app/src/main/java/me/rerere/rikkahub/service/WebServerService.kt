@@ -26,8 +26,8 @@ private const val TAG = "WebServerService"
 class WebServerService : Service() {
 
     companion object {
-        const val ACTION_START = "me.rerere.rikkahub.action.WEB_SERVER_START"
-        const val ACTION_STOP = "me.rerere.rikkahub.action.WEB_SERVER_STOP"
+        const val ACTION_START = "cn.losfer.aihub.action.WEB_SERVER_START"
+        const val ACTION_STOP = "cn.losfer.aihub.action.WEB_SERVER_STOP"
         const val EXTRA_PORT = "port"
         const val EXTRA_LOCALHOST_ONLY = "localhost_only"
         const val NOTIFICATION_ID = 2001

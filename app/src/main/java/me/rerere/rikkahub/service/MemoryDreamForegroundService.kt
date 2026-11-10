@@ -27,8 +27,8 @@ private const val TAG = "MemoryDreamFgs"
  */
 class MemoryDreamForegroundService : Service() {
     companion object {
-        private const val ACTION_ACQUIRE = "me.rerere.rikkahub.action.MEMORY_DREAM_ACQUIRE"
-        private const val ACTION_RELEASE = "me.rerere.rikkahub.action.MEMORY_DREAM_RELEASE"
+        private const val ACTION_ACQUIRE = "cn.losfer.aihub.action.MEMORY_DREAM_ACQUIRE"
+        private const val ACTION_RELEASE = "cn.losfer.aihub.action.MEMORY_DREAM_RELEASE"
         private const val EXTRA_HOLD_ID = "hold_id"
 
         const val NOTIFICATION_ID = 2004

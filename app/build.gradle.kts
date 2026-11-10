@@ -23,7 +23,8 @@ android {
     }
 
     defaultConfig {
-        applicationId = "me.rerere.rikkahub"
+        // LOSFER Hub 使用独立包名，可与原版 RikkaHub 共存；namespace 与源码包名保持不变
+        applicationId = "cn.losfer.aihub"
         minSdk = 26
         targetSdk = 37
         versionCode = 200

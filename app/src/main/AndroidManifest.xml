@@ -92,12 +92,12 @@
       </intent-filter>
 
       <intent-filter>
-        <action android:name="me.rerere.rikkahub.action.TRANSLATE" />
+        <action android:name="cn.losfer.aihub.action.TRANSLATE" />
         <category android:name="android.intent.category.DEFAULT" />
       </intent-filter>
 
       <intent-filter>
-        <action android:name="me.rerere.rikkahub.action.MEDIA_CREATION" />
+        <action android:name="cn.losfer.aihub.action.MEDIA_CREATION" />
         <category android:name="android.intent.category.DEFAULT" />
       </intent-filter>
 

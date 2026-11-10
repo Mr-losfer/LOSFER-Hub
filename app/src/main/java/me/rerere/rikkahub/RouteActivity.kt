@@ -351,19 +351,22 @@ class RouteActivity : ComponentActivity() {
                 LocalConfiguration provides configuration,
                 LocalSettings provides settings,
             ) {
-                WelcomePage(
-                    onDone = { language ->
-                        applyAppLanguage(this@RouteActivity, language.tag)
-                        lifecycleScope.launch {
-                            settingsStore.update {
-                                it.copy(
-                                    appLanguage = language.tag,
-                                    languageOnboardingDone = true,
-                                )
+                // 欢迎页也要用维吾尔语字体渲染，否则首次启动时维文字形会掉回系统字体
+                UyghurFontProvider(settings = settings) {
+                    WelcomePage(
+                        onDone = { language ->
+                            applyAppLanguage(this@RouteActivity, language.tag)
+                            lifecycleScope.launch {
+                                settingsStore.update {
+                                    it.copy(
+                                        appLanguage = language.tag,
+                                        languageOnboardingDone = true,
+                                    )
+                                }
                             }
                         }
-                    }
-                )
+                    )
+                }
             }
             return
         }

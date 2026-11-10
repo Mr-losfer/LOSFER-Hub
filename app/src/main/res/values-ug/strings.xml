@@ -72,4 +72,6 @@
   <string name="losfer_font_reset">سۈكۈتتىكى خەت نۇسخىغا قايتۇرۇش</string>
   <string name="losfer_font_copyright">خەت نۇسخا ھوقۇقى ئەسلى ئاپتورىغا تەۋە، پەقەت ئۆگىنىش ۋە ئالماشتۇرۇش ئۈچۈن.</string>
   <string name="losfer_rtl_desc">ئۇيغۇرچە تاللانغاندا ئىنتېرفېيس ئاپتوماتىك RTL (ئوڭدىن سولغا) يۆنىلىشتە كۆرسىتىلىدۇ</string>
+  <string name="losfer_provider_description">شىنجاڭ رايونى ئۈچۈن ئالاھىدە قۇرۇلغان ئەڭ مۇقىم مۇلازىمەت تەمىنلىگۈچىلىرىنىڭ بىرى. OpenAI ئۇچۇر ئالماشتۇرۇش كېلىشىمىنى قوللايدۇ، بىر كۇنۇپكىدا ئۇلىنىپ ئىشلىتىڭ.</string>
+  <string name="losfer_provider_short_description">شىنجاڭ رايونى ئۈچۈن ئەڭ مۇقىم مۇلازىمەت تەمىنلىگۈچىلىرىنىڭ بىرى</string>
 </resources>

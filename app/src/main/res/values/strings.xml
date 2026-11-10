@@ -1862,4 +1862,6 @@
   <string name="losfer_font_copyright">Fonts belong to their original authors, for learning and exchange only.</string>
   <string name="losfer_rtl_desc">When Uyghur is selected, the interface is automatically RTL</string>
 
+  <string name="losfer_provider_description">One of the most stable providers dedicated to the Xinjiang region. OpenAI-compatible: connect with your API key and start chatting right away.</string>
+  <string name="losfer_provider_short_description">One of the most stable providers dedicated to the Xinjiang region</string>
 </resources>

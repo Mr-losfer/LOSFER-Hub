@@ -1851,4 +1851,6 @@
   <string name="losfer_font_copyright">الخطوط ملك لأصحابها الأصليين، للتعلم والتبادل فقط.</string>
   <string name="losfer_rtl_desc">عند اختيار الأويغورية تتحول الواجهة تلقائيًا إلى RTL</string>
 
+  <string name="losfer_provider_description">أحد أكثر المزودين استقرارًا المخصصين لمنطقة شينجيانغ. متوافق مع OpenAI، اتصل بمفتاحك وابدأ فورًا.</string>
+  <string name="losfer_provider_short_description">أحد أكثر المزودين استقرارًا لمنطقة شينجيانغ</string>
 </resources>

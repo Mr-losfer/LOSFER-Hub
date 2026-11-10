@@ -26,8 +26,11 @@ import me.rerere.rikkahub.BuildConfig
 import okhttp3.OkHttpClient
 import okhttp3.Request
 
-// LOSFER Hub：更新信息来自自己的 GitHub 仓库 Releases
-private val API_URL = LosferInfo.GITHUB_API_LATEST_RELEASE
+// LOSFER Hub：更新信息来自自己的 GitHub 仓库 Releases，优先走 gh-proxy 加速
+private val API_URLS = listOf(
+    LosferInfo.proxied(LosferInfo.GITHUB_API_LATEST_RELEASE),
+    LosferInfo.GITHUB_API_LATEST_RELEASE,
+)
 
 class UpdateChecker(
     private val client: OkHttpClient,
@@ -43,26 +46,32 @@ class UpdateChecker(
 
     private fun checkUpdate(): Flow<UiState<UpdateInfo>> = flow {
         emit(UiState.Loading)
-        emit(
-            UiState.Success(
-                data = try {
-                    val response = client.newCall(
-                        Request.Builder()
-                            .url(API_URL)
-                            .get()
-                            .addHeader("User-Agent", "LOSFER-Hub ${BuildConfig.VERSION_NAME} #${BuildConfig.VERSION_CODE}")
-                            .addHeader("Accept", "application/vnd.github+json")
-                            .build()
-                    ).await()
-                    if (!response.isSuccessful) {
-                        throw Exception("Failed to fetch update info: HTTP ${response.code}")
-                    }
-                    parseGitHubRelease(response.body.string())
-                } catch (e: Exception) {
-                    throw Exception("Failed to fetch update info", e)
+        var lastError: Exception? = null
+        // 代理优先，失败再直连
+        for (url in API_URLS) {
+            val info = runCatching {
+                val response = client.newCall(
+                    Request.Builder()
+                        .url(url)
+                        .get()
+                        .addHeader("User-Agent", "LOSFER-Hub ${BuildConfig.VERSION_NAME} #${BuildConfig.VERSION_CODE}")
+                        .addHeader("Accept", "application/vnd.github+json")
+                        .build()
+                ).await()
+                if (!response.isSuccessful) {
+                    throw Exception("HTTP ${response.code}")
                 }
-            )
-        )
+                parseGitHubRelease(response.body.string())
+            }.getOrElse { e ->
+                lastError = if (e is Exception) e else Exception(e)
+                null
+            }
+            if (info != null) {
+                emit(UiState.Success(info))
+                return@flow
+            }
+        }
+        throw Exception("Failed to fetch update info", lastError)
     }.catch {
         emit(UiState.Error(it))
     }.flowOn(Dispatchers.IO)
@@ -88,7 +97,8 @@ class UpdateChecker(
             val sizeBytes = obj["size"]?.jsonPrimitive?.contentOrNull?.toLongOrNull() ?: 0L
             UpdateDownload(
                 name = name,
-                url = url,
+                // APK 走 gh-proxy 加速，国内下载更稳
+                url = LosferInfo.proxied(url),
                 size = if (sizeBytes > 0) String.format("%.1f MB", sizeBytes / 1024.0 / 1024.0) else "APK",
             )
         }

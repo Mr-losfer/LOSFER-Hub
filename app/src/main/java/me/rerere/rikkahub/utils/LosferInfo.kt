@@ -16,6 +16,16 @@ object LosferInfo {
     val GITHUB_API_LATEST_RELEASE = "https://api.github.com/repos/$GITHUB_OWNER/$GITHUB_REPO/releases/latest"
     val GITHUB_LICENSE_URL = "$GITHUB_URL/blob/master/LICENSE"
 
+    /**
+     * 国内可用的 GitHub 加速代理。更新检测与 APK 下载都优先走它，
+     * 失败时再直连 github.com。
+     */
+    const val GH_PROXY = "https://gh-proxy.com/"
+
+    /** 给任意 github 链接套上加速代理 */
+    fun proxied(url: String): String =
+        if (url.startsWith("http") && !url.startsWith(GH_PROXY)) GH_PROXY + url else url
+
     const val AUTHOR_NAME = "Mr-losfer"
     const val AUTHOR_URL = "https://github.com/$GITHUB_OWNER"
 

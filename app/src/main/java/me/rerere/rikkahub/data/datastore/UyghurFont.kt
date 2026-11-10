@@ -60,7 +60,8 @@ enum class UyghurFont(
         get() = FontFamily(Font(fontRes))
 
     companion object {
-        val DEFAULT = ALKATIP_ASLIYA
+        // LOSFER Hub：默认维吾尔语字体为 UKIJ Tuz（用户指定）
+        val DEFAULT = UKIJ_TUZ
 
         fun fromId(id: String?): UyghurFont = entries.find { it.id == id } ?: DEFAULT
     }

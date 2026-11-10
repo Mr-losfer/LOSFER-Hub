@@ -1,5 +1,6 @@
 package me.rerere.rikkahub.data.datastore
 
+import me.rerere.ai.provider.ProviderSetting
 import me.rerere.rikkahub.data.losfer.LosferService
 
 /** 读盘后和每次修改后都要过一遍，保证内存里的设置始终是规整的。 */
@@ -8,7 +9,10 @@ internal fun Settings.normalized(): Settings =
 
 // 补齐缺失的内置提供商/助手/TTS，内置提供商和推荐提供商的描述信息始终以代码里的为准
 internal fun Settings.withBuiltInDefaults(): Settings {
-    var providers = this.providers.ifEmpty { DEFAULT_PROVIDERS }.toMutableList()
+    var providers = this.providers.ifEmpty { DEFAULT_PROVIDERS }
+        // LOSFER Hub：旧版本默认塞进来、但用户从没配置过的内置提供商直接清掉，只留 LOSFER
+        .filterNot { it.id != LosferService.LOSFER_PROVIDER_ID && it.isUnconfiguredBuiltIn() }
+        .toMutableList()
     DEFAULT_PROVIDERS.forEach { defaultProvider ->
         if (providers.none { it.id == defaultProvider.id }) {
             providers.add(defaultProvider.copyProvider())
@@ -107,3 +111,13 @@ private fun Settings.withValuesInRange(): Settings = copy(
     searchServiceSelected = searchServiceSelected.coerceIn(0, (searchServices.size - 1).coerceAtLeast(0)),
     defaultTTSPlaybackSpeed = defaultTTSPlaybackSpeed.coerceIn(0.5f, 2.0f),
 )
+
+/**
+ * 是否是「内置但从未配置过」的提供商：没有密钥、没有模型。
+ * 这类条目只可能来自旧版本的默认列表，LOSFER Hub 一律清除。
+ */
+private fun ProviderSetting.isUnconfiguredBuiltIn(): Boolean = when (this) {
+    is ProviderSetting.ApiKey -> builtIn && apiKey.isBlank() && models.isEmpty()
+    is ProviderSetting.Account -> builtIn && credential == null && models.isEmpty()
+    else -> false
+}

@@ -1864,4 +1864,6 @@ mDNS 地址：使用 .local 主机名，同一网络中的其他设备可通过�
   <string name="losfer_font_copyright">字体版权归原作者所有，仅供学习交流。</string>
   <string name="losfer_rtl_desc">选择维吾尔语后，界面会自动切换为 RTL（从右到左）布局</string>
 
+  <string name="losfer_provider_description">专为新疆地区提供最稳定服务的提供商之一。兼容 OpenAI 协议，一键接入即可使用。</string>
+  <string name="losfer_provider_short_description">专为新疆地区提供最稳定服务的提供商之一</string>
 </resources>

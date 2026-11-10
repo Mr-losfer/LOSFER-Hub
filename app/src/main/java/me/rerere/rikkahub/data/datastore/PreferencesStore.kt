@@ -183,6 +183,12 @@ class SettingsStore internal constructor(
         // 赞助提醒
         val SPONSOR_ALERT_DISMISSED_AT = intPreferencesKey("sponsor_alert_dismissed_at")
 
+        // LOSFER Hub：语言与维吾尔语字体
+        val APP_LANGUAGE = stringPreferencesKey("losfer_app_language")
+        val LANGUAGE_ONBOARDING_DONE = booleanPreferencesKey("losfer_language_onboarding_done")
+        val UYGHUR_FONT_ID = stringPreferencesKey("losfer_uyghur_font_id")
+        val USE_UYGHUR_FONT = booleanPreferencesKey("losfer_use_uyghur_font")
+
         // Uses the same DataStore singleton without starting settings flows or requiring Koin.
         internal suspend fun restoreBeforeInitialization(context: Context, settings: Settings, launchCount: Int) {
             require(!settings.init) { "Cannot restore uninitialized settings" }

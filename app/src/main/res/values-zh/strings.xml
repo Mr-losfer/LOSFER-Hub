@@ -7,7 +7,7 @@
   <string name="about_page_version">版本</string>
   <string name="about_page_website">官网</string>
   <string name="add">添加</string>
-  <string name="app_name">RikkaHub</string>
+  <string name="app_name">LOSFER Hub</string>
   <string name="asr_button_content_description">语音识别</string>
   <string name="asr_button_stop">停止</string>
   <string name="assistant_detail_basic_desc">配置名称、头像、模型和参数</string>
@@ -1823,4 +1823,45 @@ mDNS 地址：使用 .local 主机名，同一网络中的其他设备可通过�
   <string name="chat_page_select_all">全选</string>
   <string name="chat_page_deselect_all">取消全选</string>
   <string name="chat_page_clear_selection">清除选择</string>
+
+  <!-- LOSFER Hub -->
+  <string name="losfer_author_label">作者</string>
+  <string name="losfer_author_name">Mr-losfer</string>
+  <string name="losfer_website_label">LOSFER 官网</string>
+  <string name="losfer_api_portal">LOSFER API 中心</string>
+  <string name="losfer_quick_access_title">LOSFER 一键接入</string>
+  <string name="losfer_quick_access_desc">输入 API 密钥，自动添加提供商与模型</string>
+  <string name="losfer_quick_access_dialog_title">LOSFER 一键接入</string>
+  <string name="losfer_quick_access_dialog_desc">从下方地址获取 API 密钥并粘贴到这里。程序会先校验密钥，随后自动添加一个 OpenAI 协议提供商并获取全部模型列表。</string>
+  <string name="losfer_quick_access_api_key_hint">API 密钥 (ls-...)</string>
+  <string name="losfer_quick_access_how_to_get">如何获取 API 密钥？</string>
+  <string name="losfer_quick_access_get_link">https://api.losfer.cn/pc/api-list/keys/</string>
+  <string name="losfer_quick_access_open_portal">打开 API 中心</string>
+  <string name="losfer_quick_access_connect">接入</string>
+  <string name="losfer_quick_access_checking">正在校验…</string>
+  <string name="losfer_quick_access_invalid_key">API 密钥无效，请检查后重试</string>
+  <string name="losfer_quick_access_empty_key">请先输入 API 密钥</string>
+  <string name="losfer_quick_access_network_error">网络错误，请稍后重试</string>
+  <string name="losfer_quick_access_success">接入成功，已添加 %1$d 个模型</string>
+  <string name="losfer_quick_access_updated">已更新提供商，共 %1$d 个模型</string>
+  <string name="losfer_welcome_title">欢迎</string>
+  <string name="losfer_welcome_subtitle">LOSFER Hub</string>
+  <string name="losfer_welcome_desc">请选择你偏好的语言，之后可以在设置中随时更改。</string>
+  <string name="losfer_welcome_continue">继续</string>
+  <string name="losfer_language_uyghur">ئۇيغۇرچە</string>
+  <string name="losfer_language_chinese">中文（简体）</string>
+  <string name="losfer_language_english">English</string>
+  <string name="losfer_language_system">跟随系统</string>
+  <string name="losfer_language_font_page_title">语言与字体</string>
+  <string name="losfer_language_section">界面语言</string>
+  <string name="losfer_language_desc">选择应用的显示语言</string>
+  <string name="losfer_font_section">维吾尔语字体</string>
+  <string name="losfer_font_enable">启用维吾尔语字体</string>
+  <string name="losfer_font_enable_desc">界面中的维吾尔语文本使用所选字体渲染</string>
+  <string name="losfer_font_default_badge">默认</string>
+  <string name="losfer_font_preview">ياخشىمۇسىز، بۇ خەت نۇسخىنىڭ كۆرۈنۈشى.</string>
+  <string name="losfer_font_reset">恢复默认字体</string>
+  <string name="losfer_font_copyright">字体版权归原作者所有，仅供学习交流。</string>
+  <string name="losfer_rtl_desc">选择维吾尔语后，界面会自动切换为 RTL（从右到左）布局</string>
+
 </resources>

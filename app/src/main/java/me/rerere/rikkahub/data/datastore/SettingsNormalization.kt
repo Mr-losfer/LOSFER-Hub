@@ -1,5 +1,7 @@
 package me.rerere.rikkahub.data.datastore
 
+import me.rerere.rikkahub.data.losfer.LosferService
+
 /** 读盘后和每次修改后都要过一遍，保证内存里的设置始终是规整的。 */
 internal fun Settings.normalized(): Settings =
     withBuiltInDefaults().withoutInvalidReferences().withValuesInRange()
@@ -31,6 +33,11 @@ internal fun Settings.withBuiltInDefaults(): Settings {
             else -> provider
         }
     }.toMutableList()
+    // LOSFER Hub：官方提供商始终排在最前面（旧版本升级上来的用户也一样）
+    val losferIndex = providers.indexOfFirst { it.id == LosferService.LOSFER_PROVIDER_ID }
+    if (losferIndex > 0) {
+        providers.add(0, providers.removeAt(losferIndex))
+    }
     val assistants = this.assistants.ifEmpty { DEFAULT_ASSISTANTS }.toMutableList()
     DEFAULT_ASSISTANTS.forEach { defaultAssistant ->
         if (assistants.none { it.id == defaultAssistant.id }) {

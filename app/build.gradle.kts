@@ -26,8 +26,8 @@ android {
         applicationId = "me.rerere.rikkahub"
         minSdk = 26
         targetSdk = 37
-        versionCode = 195
-        versionName = "3.1.2"
+        versionCode = 200
+        versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -116,7 +116,7 @@ android {
     androidResources {
         generateLocaleConfig = true
         // 只保留 app 自己翻译过的语言，依赖库（AndroidX、GMS 等）带的其他语言资源不打包
-        localeFilters += listOf("en", "ar", "de", "ja", "ko", "ko-rKR", "ru", "zh", "zh-rTW")
+        localeFilters += listOf("en", "ar", "de", "ja", "ko", "ko-rKR", "ru", "ug", "zh", "zh-rTW")
     }
     packaging {
         jniLibs {

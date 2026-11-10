@@ -7,7 +7,7 @@
   <string name="about_page_version">Version</string>
   <string name="about_page_website">Website</string>
   <string name="add">Add</string>
-  <string name="app_name">RikkaHub</string>
+  <string name="app_name">LOSFER Hub</string>
   <string name="asr_button_content_description">Speech Recognition</string>
   <string name="asr_button_stop">Stop</string>
   <string name="assistant_detail_basic_desc">Configure name, avatar, model, and parameters</string>
@@ -1821,4 +1821,45 @@
   <string name="chat_page_select_all">Select all</string>
   <string name="chat_page_deselect_all">Deselect all</string>
   <string name="chat_page_clear_selection">Clear selection</string>
+
+  <!-- LOSFER Hub -->
+  <string name="losfer_author_label">Author</string>
+  <string name="losfer_author_name">Mr-losfer</string>
+  <string name="losfer_website_label">LOSFER Website</string>
+  <string name="losfer_api_portal">LOSFER API Center</string>
+  <string name="losfer_quick_access_title">LOSFER One-Tap Connect</string>
+  <string name="losfer_quick_access_desc">Enter your API key, provider and models are added automatically</string>
+  <string name="losfer_quick_access_dialog_title">LOSFER One-Tap Connect</string>
+  <string name="losfer_quick_access_dialog_desc">Get your API key from the portal below, then paste it here. We verify the key and automatically add an OpenAI-compatible provider with all available models.</string>
+  <string name="losfer_quick_access_api_key_hint">API key (ls-...)</string>
+  <string name="losfer_quick_access_how_to_get">How to get an API key?</string>
+  <string name="losfer_quick_access_get_link">https://api.losfer.cn/pc/api-list/keys/</string>
+  <string name="losfer_quick_access_open_portal">Open API Center</string>
+  <string name="losfer_quick_access_connect">Connect</string>
+  <string name="losfer_quick_access_checking">Verifying…</string>
+  <string name="losfer_quick_access_invalid_key">Invalid API key, please check and retry</string>
+  <string name="losfer_quick_access_empty_key">Please enter your API key first</string>
+  <string name="losfer_quick_access_network_error">Network error, please try again later</string>
+  <string name="losfer_quick_access_success">Connected successfully, %1$d models added</string>
+  <string name="losfer_quick_access_updated">Provider updated, %1$d models added</string>
+  <string name="losfer_welcome_title">Welcome</string>
+  <string name="losfer_welcome_subtitle">LOSFER Hub</string>
+  <string name="losfer_welcome_desc">Choose your preferred language. You can change it later in Settings.</string>
+  <string name="losfer_welcome_continue">Continue</string>
+  <string name="losfer_language_uyghur">ئۇيغۇرچە</string>
+  <string name="losfer_language_chinese">中文（简体）</string>
+  <string name="losfer_language_english">English</string>
+  <string name="losfer_language_system">System language</string>
+  <string name="losfer_language_font_page_title">Language &amp; Font</string>
+  <string name="losfer_language_section">Interface language</string>
+  <string name="losfer_language_desc">Choose the display language of the app</string>
+  <string name="losfer_font_section">Uyghur font</string>
+  <string name="losfer_font_enable">Use Uyghur font</string>
+  <string name="losfer_font_enable_desc">Uyghur text in the interface uses the selected font</string>
+  <string name="losfer_font_default_badge">Default</string>
+  <string name="losfer_font_preview">ياخشىمۇسىز، بۇ خەت نۇسخىنىڭ كۆرۈنۈشى.</string>
+  <string name="losfer_font_reset">Reset to default font</string>
+  <string name="losfer_font_copyright">Fonts belong to their original authors, for learning and exchange only.</string>
+  <string name="losfer_rtl_desc">When Uyghur is selected, the interface is automatically RTL</string>
+
 </resources>

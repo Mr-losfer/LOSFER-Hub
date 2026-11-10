@@ -11,12 +11,22 @@ import androidx.compose.ui.text.withStyle
 import me.rerere.ai.provider.ProviderSetting
 import me.rerere.ai.provider.QuotaQuery
 import me.rerere.rikkahub.R
+import me.rerere.rikkahub.data.losfer.LosferService
 import me.rerere.rikkahub.ui.components.richtext.MarkdownBlock
 import kotlin.uuid.Uuid
 
 val DEFAULT_AUTO_MODEL_ID = Uuid.parse("b7055fb4-39f9-4042-a88a-0d80ed76cf08")
 
 val DEFAULT_PROVIDERS = listOf(
+    // LOSFER Hub：默认第一个提供商为 LOSFER（官方服务）
+    ProviderSetting.OpenAI(
+        id = LosferService.LOSFER_PROVIDER_ID,
+        name = "LOSFER",
+        baseUrl = LosferService.BASE_URL,
+        apiKey = "",
+        enabled = true,
+        builtIn = true,
+    ),
     ProviderSetting.OpenAI(
         id = Uuid.parse("1eeea727-9ee5-4cae-93e6-6fb01a4d051e"),
         name = "OpenAI",

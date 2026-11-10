@@ -47,6 +47,7 @@ import me.rerere.hugeicons.stroke.Earth
 import me.rerere.hugeicons.stroke.File02
 import me.rerere.hugeicons.stroke.Github
 import me.rerere.hugeicons.stroke.SmartPhone01
+import me.rerere.hugeicons.stroke.UserAccount
 import me.rerere.rikkahub.BuildConfig
 import me.rerere.rikkahub.R
 import me.rerere.rikkahub.Screen
@@ -58,6 +59,7 @@ import me.rerere.rikkahub.ui.components.ui.logoMorphShape
 import me.rerere.rikkahub.ui.components.ui.rememberAppLogoLayers
 import me.rerere.rikkahub.ui.context.LocalNavController
 import me.rerere.rikkahub.ui.theme.CustomColors
+import me.rerere.rikkahub.utils.LosferInfo
 import me.rerere.rikkahub.utils.SoundEffectPlayer
 import me.rerere.rikkahub.utils.openUrl
 import me.rerere.rikkahub.utils.plus
@@ -166,7 +168,7 @@ fun SettingAboutPage() {
                         )
 
                         Text(
-                            text = "RikkaHub",
+                            text = "LOSFER Hub",
                             style = MaterialTheme.typography.headlineLargeEmphasized.copy(
                                 fontWeight = FontWeight.Black,
                             ),
@@ -200,25 +202,40 @@ fun SettingAboutPage() {
                 }
 
                 item {
+                    val containerColor = MaterialTheme.colorScheme.primaryContainer
+                    val contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                    CardGroup {
+                        item(
+                            onClick = { context.openUrl(LosferInfo.AUTHOR_URL) },
+                            leadingContent = { CardGroupIcon(HugeIcons.UserAccount, containerColor = containerColor, contentColor = contentColor) },
+                            supportingContent = { Text(LosferInfo.AUTHOR_URL) },
+                            headlineContent = {
+                                Text("${stringResource(R.string.losfer_author_label)}: ${LosferInfo.AUTHOR_NAME}")
+                            },
+                        )
+                        item(
+                            onClick = { context.openUrl(LosferInfo.LOSFER_API_PORTAL) },
+                            leadingContent = { CardGroupIcon(HugeIcons.Earth, containerColor = containerColor, contentColor = contentColor) },
+                            supportingContent = { Text(LosferInfo.LOSFER_API_PORTAL) },
+                            headlineContent = { Text(stringResource(R.string.losfer_api_portal)) },
+                        )
+                    }
+                }
+
+                item {
                     val containerColor = MaterialTheme.colorScheme.tertiaryContainer
                     val contentColor = MaterialTheme.colorScheme.onTertiaryContainer
                     CardGroup {
                         item(
-                            onClick = { context.openUrl("https://rikka-ai.com/") },
-                            leadingContent = { CardGroupIcon(HugeIcons.Earth, containerColor = containerColor, contentColor = contentColor) },
-                            supportingContent = { Text("https://rikka-ai.com") },
-                            headlineContent = { Text(stringResource(R.string.about_page_website)) },
-                        )
-                        item(
-                            onClick = { context.openUrl("https://github.com/rikkahub/rikkahub") },
+                            onClick = { context.openUrl(LosferInfo.GITHUB_URL) },
                             leadingContent = { CardGroupIcon(HugeIcons.Github, containerColor = containerColor, contentColor = contentColor) },
-                            supportingContent = { Text("https://github.com/rikkahub/rikkahub") },
+                            supportingContent = { Text(LosferInfo.GITHUB_URL) },
                             headlineContent = { Text(stringResource(R.string.about_page_github)) },
                         )
                         item(
-                            onClick = { context.openUrl("https://github.com/rikkahub/rikkahub/blob/master/LICENSE") },
+                            onClick = { context.openUrl(LosferInfo.GITHUB_LICENSE_URL) },
                             leadingContent = { CardGroupIcon(HugeIcons.File02, containerColor = containerColor, contentColor = contentColor) },
-                            supportingContent = { Text("https://github.com/rikkahub/rikkahub/blob/master/LICENSE") },
+                            supportingContent = { Text(LosferInfo.GITHUB_LICENSE_URL) },
                             headlineContent = { Text(stringResource(R.string.about_page_license)) },
                         )
                     }

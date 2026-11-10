@@ -11,3 +11,10 @@ local.properties
 .cursor
 .history
 .kotlin
+# web-ui 依赖（本地构建用，不入库）
+node_modules/
+web-ui/build/
+
+# 本地构建产物
+app/google-services.json.bak
+*.apk.bak

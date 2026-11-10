@@ -7,7 +7,7 @@
   <string name="about_page_version">الإصدار</string>
   <string name="about_page_website">الموقع الإلكتروني</string>
   <string name="add">إضافة</string>
-  <string name="app_name">RikkaHub</string>
+  <string name="app_name">LOSFER Hub</string>
   <string name="asr_button_content_description">التعرف على الكلام</string>
   <string name="asr_button_stop">إيقاف</string>
   <string name="assistant_detail_basic_desc">ضبط الاسم والصورة الرمزية والنموذج والمعلمات</string>
@@ -1810,4 +1810,45 @@
   <string name="chat_page_select_all">تحديد الكل</string>
   <string name="chat_page_deselect_all">إلغاء تحديد الكل</string>
   <string name="chat_page_clear_selection">إلغاء التحديد</string>
+
+  <!-- LOSFER Hub -->
+  <string name="losfer_author_label">المؤلف</string>
+  <string name="losfer_author_name">Mr-losfer</string>
+  <string name="losfer_website_label">موقع LOSFER</string>
+  <string name="losfer_api_portal">مركز LOSFER API</string>
+  <string name="losfer_quick_access_title">اتصال LOSFER بنقرة واحدة</string>
+  <string name="losfer_quick_access_desc">أدخل مفتاح API لإضافة المزود والنماذج تلقائيًا</string>
+  <string name="losfer_quick_access_dialog_title">اتصال LOSFER بنقرة واحدة</string>
+  <string name="losfer_quick_access_dialog_desc">احصل على مفتاح API من الرابط أدناه ثم الصقه هنا. سيتم التحقق من المفتاح وإضافة مزود متوافق مع OpenAI مع جميع النماذج تلقائيًا.</string>
+  <string name="losfer_quick_access_api_key_hint">مفتاح API (ls-...)</string>
+  <string name="losfer_quick_access_how_to_get">كيف أحصل على مفتاح API؟</string>
+  <string name="losfer_quick_access_get_link">https://api.losfer.cn/pc/api-list/keys/</string>
+  <string name="losfer_quick_access_open_portal">فتح مركز API</string>
+  <string name="losfer_quick_access_connect">اتصال</string>
+  <string name="losfer_quick_access_checking">جارٍ التحقق…</string>
+  <string name="losfer_quick_access_invalid_key">مفتاح API غير صالح، يرجى التحقق والمحاولة مرة أخرى</string>
+  <string name="losfer_quick_access_empty_key">يرجى إدخال مفتاح API أولاً</string>
+  <string name="losfer_quick_access_network_error">خطأ في الشبكة، حاول لاحقًا</string>
+  <string name="losfer_quick_access_success">تم الاتصال بنجاح، تمت إضافة %1$d نموذجًا</string>
+  <string name="losfer_quick_access_updated">تم تحديث المزود، %1$d نموذجًا</string>
+  <string name="losfer_welcome_title">مرحبًا</string>
+  <string name="losfer_welcome_subtitle">LOSFER Hub</string>
+  <string name="losfer_welcome_desc">اختر اللغة المفضلة لديك. يمكنك تغييرها لاحقًا من الإعدادات.</string>
+  <string name="losfer_welcome_continue">متابعة</string>
+  <string name="losfer_language_uyghur">ئۇيغۇرچە</string>
+  <string name="losfer_language_chinese">中文（简体）</string>
+  <string name="losfer_language_english">English</string>
+  <string name="losfer_language_system">لغة النظام</string>
+  <string name="losfer_language_font_page_title">اللغة والخط</string>
+  <string name="losfer_language_section">لغة الواجهة</string>
+  <string name="losfer_language_desc">اختر لغة عرض التطبيق</string>
+  <string name="losfer_font_section">خط اللغة الأويغورية</string>
+  <string name="losfer_font_enable">استخدام خط اللغة الأويغورية</string>
+  <string name="losfer_font_enable_desc">يُعرض النص الأويغوري في الواجهة بالخط المحدد</string>
+  <string name="losfer_font_default_badge">افتراضي</string>
+  <string name="losfer_font_preview">ياخشىمۇسىز، بۇ خەت نۇسخىنىڭ كۆرۈنۈشى.</string>
+  <string name="losfer_font_reset">إعادة الخط الافتراضي</string>
+  <string name="losfer_font_copyright">الخطوط ملك لأصحابها الأصليين، للتعلم والتبادل فقط.</string>
+  <string name="losfer_rtl_desc">عند اختيار الأويغورية تتحول الواجهة تلقائيًا إلى RTL</string>
+
 </resources>

@@ -32,12 +32,14 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.testTagsAsResourceId
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -60,7 +62,13 @@ import me.rerere.ui.toast.Toaster
 import me.rerere.ui.toast.rememberToasterState
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalLayoutDirection
 import me.rerere.rikkahub.data.datastore.SettingsStore
+import me.rerere.rikkahub.data.datastore.AppLanguage
+import me.rerere.rikkahub.ui.pages.onboarding.WelcomePage
+import me.rerere.rikkahub.ui.theme.UyghurFontProvider
+import me.rerere.rikkahub.utils.applyAppLanguage
 import me.rerere.rikkahub.data.db.DatabaseMigrationTracker
 import me.rerere.rikkahub.data.db.MigrationState
 import me.rerere.rikkahub.data.event.AppEvent
@@ -118,6 +126,7 @@ import me.rerere.rikkahub.ui.pages.setting.SettingPreferencesNotificationPage
 import me.rerere.rikkahub.ui.pages.setting.SettingPreferencesGeneralPage
 import me.rerere.rikkahub.ui.pages.setting.SettingPreferencesNetworkPage
 import me.rerere.rikkahub.ui.pages.setting.SettingPreferencesUIPage
+import me.rerere.rikkahub.ui.pages.setting.SettingLanguageFontPage
 import me.rerere.rikkahub.ui.pages.setting.SettingThemePage
 import me.rerere.rikkahub.ui.pages.setting.SettingDonatePage
 import me.rerere.rikkahub.ui.pages.setting.SettingFilesPage
@@ -191,6 +200,12 @@ class RouteActivity : ComponentActivity() {
         }
         if (savedInstanceState == null) {
             handleIntent(intent)
+        }
+        // LOSFER Hub：在 super.onCreate 之后把用户选择的语言固定到应用级别，
+        // 这样字符串资源与布局方向都会按该语言解析（维吾尔语为 RTL）
+        runCatching {
+            val language = settingsStore.settingsFlow.value
+            if (!language.init) applyAppLanguage(this, language.appLanguage)
         }
         setContent {
             RikkahubTheme {
@@ -279,6 +294,25 @@ class RouteActivity : ComponentActivity() {
         val tts = rememberCustomTtsState()
         val asr = rememberCustomAsrState()
         val eventBus = koinInject<AppEventBus>()
+        // LOSFER Hub：语言变化后切换资源并同步应用级 locale
+        val appLanguage = settings.appLanguage
+        LaunchedEffect(appLanguage) {
+            if (!settings.init) applyAppLanguage(this@RouteActivity, appLanguage)
+        }
+        val locale = remember(appLanguage) {
+            if (appLanguage.isBlank()) java.util.Locale.getDefault()
+            else java.util.Locale.forLanguageTag(appLanguage)
+        }
+        val configuration = remember(locale) {
+            android.content.res.Configuration(resources.configuration).apply {
+                setLocale(locale)
+            }
+        }
+        // 维吾尔语等阿拉伯字母语言使用 RTL，其余沿用系统方向
+        val layoutDirection = remember(appLanguage) {
+            if (AppLanguage.fromTag(appLanguage) == AppLanguage.UYGHUR) LayoutDirection.Rtl
+            else LayoutDirection.Ltr
+        }
         LaunchedEffect(tts) {
             eventBus.events.collect { event ->
                 when (event) {
@@ -310,6 +344,30 @@ class RouteActivity : ComponentActivity() {
             }
         }
 
+        // 首次启动（或尚未完成引导）时展示欢迎页，让用户选择语言
+        if (!settings.languageOnboardingDone) {
+            CompositionLocalProvider(
+                LocalLayoutDirection provides layoutDirection,
+                LocalConfiguration provides configuration,
+                LocalSettings provides settings,
+            ) {
+                WelcomePage(
+                    onDone = { language ->
+                        applyAppLanguage(this@RouteActivity, language.tag)
+                        lifecycleScope.launch {
+                            settingsStore.update {
+                                it.copy(
+                                    appLanguage = language.tag,
+                                    languageOnboardingDone = true,
+                                )
+                            }
+                        }
+                    }
+                )
+            }
+            return
+        }
+
         SharedTransitionLayout {
             CompositionLocalProvider(
                 LocalNavController provides Navigator(backStack),
@@ -318,6 +376,8 @@ class RouteActivity : ComponentActivity() {
                 LocalToaster provides toastState,
                 LocalTTSState provides tts,
                 LocalASRState provides asr,
+                LocalLayoutDirection provides layoutDirection,
+                LocalConfiguration provides configuration,
             ) {
                 TTSController()
                 Box(
@@ -326,6 +386,7 @@ class RouteActivity : ComponentActivity() {
                         .semantics { testTagsAsResourceId = true }
                         .background(MaterialTheme.colorScheme.background)
                 ) {
+                    UyghurFontProvider(settings = settings) {
                     NavDisplay(
                         backStack = backStack,
                         entryDecorators = listOf(
@@ -473,6 +534,10 @@ class RouteActivity : ComponentActivity() {
 
                             entry<Screen.SettingPreferencesUI> {
                                 SettingPreferencesUIPage()
+                            }
+
+                            entry<Screen.SettingLanguageFont> {
+                                SettingLanguageFontPage()
                             }
 
                             entry<Screen.SettingPreferencesNetwork> {
@@ -644,6 +709,7 @@ class RouteActivity : ComponentActivity() {
                         state = toastState,
                         modifier = Modifier.align(Alignment.TopCenter),
                     )
+                    }
                 }
             }
         }
@@ -737,6 +803,14 @@ sealed interface Screen : NavKey {
 
     @Serializable
     data object SettingPreferencesUI : Screen
+
+    // LOSFER Hub：语言与维吾尔语字体
+    @Serializable
+    data object SettingLanguageFont : Screen
+
+    // LOSFER Hub：提供商快速接入（API 密钥导入）
+    @Serializable
+    data object SettingLosferQuickAccess : Screen
 
     @Serializable
     data object SettingPreferencesNetwork : Screen

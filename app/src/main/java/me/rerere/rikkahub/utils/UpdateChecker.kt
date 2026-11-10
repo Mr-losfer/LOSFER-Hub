@@ -15,13 +15,19 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.contentOrNull
+import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import me.rerere.common.http.await
 import me.rerere.rikkahub.AppScope
 import me.rerere.rikkahub.BuildConfig
 import okhttp3.OkHttpClient
 import okhttp3.Request
 
-private const val API_URL = "https://updates.rikka-ai.com/"
+// LOSFER Hub：更新信息来自自己的 GitHub 仓库 Releases
+private val API_URL = LosferInfo.GITHUB_API_LATEST_RELEASE
 
 class UpdateChecker(
     private val client: OkHttpClient,
@@ -44,17 +50,14 @@ class UpdateChecker(
                         Request.Builder()
                             .url(API_URL)
                             .get()
-                            .addHeader(
-                                "User-Agent",
-                                "RikkaHub ${BuildConfig.VERSION_NAME} #${BuildConfig.VERSION_CODE}"
-                            )
+                            .addHeader("User-Agent", "LOSFER-Hub ${BuildConfig.VERSION_NAME} #${BuildConfig.VERSION_CODE}")
+                            .addHeader("Accept", "application/vnd.github+json")
                             .build()
                     ).await()
-                    if (response.isSuccessful) {
-                        json.decodeFromString<UpdateInfo>(response.body.string())
-                    } else {
-                        throw Exception("Failed to fetch update info")
+                    if (!response.isSuccessful) {
+                        throw Exception("Failed to fetch update info: HTTP ${response.code}")
                     }
+                    parseGitHubRelease(response.body.string())
                 } catch (e: Exception) {
                     throw Exception("Failed to fetch update info", e)
                 }
@@ -64,12 +67,45 @@ class UpdateChecker(
         emit(UiState.Error(it))
     }.flowOn(Dispatchers.IO)
 
+    /**
+     * 把 GitHub Release 转成应用内的更新信息：
+     * tag 名去掉前缀 v 作为版本号，assets 里的 APK 作为下载项。
+     */
+    private fun parseGitHubRelease(rawBody: String): UpdateInfo {
+        val root = json.parseToJsonElement(rawBody).jsonObject
+        val tag = root["tag_name"]?.jsonPrimitive?.contentOrNull
+            ?: root["name"]?.jsonPrimitive?.contentOrNull
+            ?: throw Exception("Missing release tag")
+        val version = tag.removePrefix("v").removePrefix("V")
+        val body = root["body"]?.jsonPrimitive?.contentOrNull.orEmpty()
+        val publishedAt = root["published_at"]?.jsonPrimitive?.contentOrNull.orEmpty()
+        val assets = root["assets"]?.jsonArray ?: JsonArray(emptyList())
+        val downloads = assets.mapNotNull { asset ->
+            val obj = asset.jsonObject
+            val name = obj["name"]?.jsonPrimitive?.contentOrNull ?: return@mapNotNull null
+            val url = obj["browser_download_url"]?.jsonPrimitive?.contentOrNull ?: return@mapNotNull null
+            if (!name.endsWith(".apk", ignoreCase = true)) return@mapNotNull null
+            val sizeBytes = obj["size"]?.jsonPrimitive?.contentOrNull?.toLongOrNull() ?: 0L
+            UpdateDownload(
+                name = name,
+                url = url,
+                size = if (sizeBytes > 0) String.format("%.1f MB", sizeBytes / 1024.0 / 1024.0) else "APK",
+            )
+        }
+        return UpdateInfo(
+            version = version,
+            publishedAt = publishedAt,
+            changelog = body,
+            downloads = downloads,
+        )
+    }
+
     fun downloadUpdate(context: Context, download: UpdateDownload) {
         runCatching {
             val request = DownloadManager.Request(download.url.toUri()).apply {
                 // 设置下载时通知栏的标题和描述
                 setTitle(download.name)
-                setDescription("正在下载更新包...")
+                setDescription("يېڭىلانما ھۆججىتى چۈشۈرۈلۈۋاتىدۇ…")
                 // 下载完成后通知栏可见
                 setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
                 // 允许在移动网络和WiFi下下载
@@ -85,7 +121,7 @@ class UpdateChecker(
             // 你可以保存返回的downloadId到本地，以便后续查询下载进度或状态
         }.onFailure {
             Toast.makeText(context, "Failed to update", Toast.LENGTH_SHORT).show()
-            context.openUrl(download.url) // 跳转到下载页面
+            context.openUrl(LosferInfo.GITHUB_RELEASES_URL) // 跳转到 Release 页面
         }
     }
 }

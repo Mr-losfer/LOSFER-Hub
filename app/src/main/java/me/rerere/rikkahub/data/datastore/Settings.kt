@@ -83,6 +83,14 @@ data class Settings(
     val webServerLocalhostOnly: Boolean = false,
     val backupReminderConfig: BackupReminderConfig = BackupReminderConfig(),
     val sponsorAlertDismissedAt: Int = 0,
+    // LOSFER Hub：界面语言（BCP 47 语言标签），空字符串表示跟随系统
+    val appLanguage: String = "",
+    // LOSFER Hub：是否已经完成首次启动的语言选择引导
+    val languageOnboardingDone: Boolean = false,
+    // LOSFER Hub：维吾尔语字体（见 UyghurFont）
+    val uyghurFontId: String = UyghurFont.DEFAULT.id,
+    // LOSFER Hub：是否使用维吾尔语字体渲染全局界面
+    val useUyghurFont: Boolean = true,
 ) {
     companion object {
         // 构造一个用于初始化的settings, 但它不能用于保存，防止使用初始值存储
@@ -201,3 +209,29 @@ data class BackupReminderConfig(
     val intervalDays: Int = 7,
     val lastBackupTime: Long = 0L,
 )
+
+/**
+ * LOSFER Hub 支持的界面语言。
+ */
+enum class AppLanguage(val tag: String) {
+    // 跟随系统
+    SYSTEM(""),
+
+    // 维吾尔语（阿拉伯字母，RTL）
+    UYGHUR("ug"),
+
+    // 中文（简体）
+    CHINESE("zh-CN"),
+
+    // 英语
+    ENGLISH("en"),
+    ;
+
+    companion object {
+        fun fromTag(tag: String?): AppLanguage = entries.find { it.tag == tag } ?: SYSTEM
+    }
+}
+
+/** 维吾尔语界面按 RTL 排版 */
+val AppLanguage.isRtl: Boolean
+    get() = this == AppLanguage.UYGHUR

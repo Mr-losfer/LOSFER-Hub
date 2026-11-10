@@ -46,6 +46,9 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import me.rerere.hugeicons.HugeIcons
 import me.rerere.hugeicons.stroke.AiMagic
+import me.rerere.hugeicons.stroke.ArrowRight01
+import me.rerere.hugeicons.stroke.Earth
+import me.rerere.hugeicons.stroke.Link01
 import me.rerere.hugeicons.stroke.Alert01
 import me.rerere.hugeicons.stroke.Book01
 import me.rerere.hugeicons.stroke.Book03
@@ -73,6 +76,7 @@ import me.rerere.rikkahub.R
 import me.rerere.rikkahub.Screen
 import me.rerere.rikkahub.data.datastore.isNotConfigured
 import me.rerere.rikkahub.data.files.FilesManager
+import me.rerere.rikkahub.ui.components.losfer.LosferQuickAccessDialog
 import me.rerere.rikkahub.ui.components.nav.BackButton
 import me.rerere.rikkahub.ui.components.ui.CardGroup
 import me.rerere.rikkahub.ui.components.ui.CardGroupIcon
@@ -163,6 +167,44 @@ fun SettingPage(vm: SettingVM = koinViewModel()) {
                 }
             }
 
+            // LOSFER Hub：一键接入（放在通用设置上方）
+            item("losferQuickAccess") {
+                var showLosferDialog by remember { mutableStateOf(false) }
+                val containerColor = MaterialTheme.colorScheme.tertiaryContainer
+                val contentColor = MaterialTheme.colorScheme.onTertiaryContainer
+                CardGroup {
+                    item(
+                        onClick = { showLosferDialog = true },
+                        leadingContent = {
+                            CardGroupIcon(
+                                HugeIcons.Link01,
+                                containerColor = containerColor,
+                                contentColor = contentColor,
+                            )
+                        },
+                        supportingContent = { Text(stringResource(R.string.losfer_quick_access_desc)) },
+                        trailingContent = {
+                            Icon(
+                                imageVector = HugeIcons.ArrowRight01,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+                            )
+                        },
+                        headlineContent = {
+                            Text(
+                                text = stringResource(R.string.losfer_quick_access_title),
+                                style = MaterialTheme.typography.titleMediumEmphasized,
+                            )
+                        },
+                    )
+                }
+                if (showLosferDialog) {
+                    LosferQuickAccessDialog(
+                        onDismissRequest = { showLosferDialog = false },
+                    )
+                }
+            }
+
             item("generalSettings") {
                 var colorMode by rememberColorMode()
                 val containerColor = MaterialTheme.colorScheme.primaryContainer
@@ -201,6 +243,12 @@ fun SettingPage(vm: SettingVM = koinViewModel()) {
                             )
                         }
                     }
+                    item(
+                        onClick = { navController.navigate(Screen.SettingLanguageFont) },
+                        leadingContent = { CardGroupIcon(HugeIcons.Earth, containerColor = containerColor, contentColor = contentColor) },
+                        supportingContent = { Text(stringResource(R.string.losfer_language_font_page_title)) },
+                        headlineContent = { Text(stringResource(R.string.losfer_language_section)) },
+                    )
                     item(
                         onClick = { navController.navigate(Screen.SettingPreferences) },
                         leadingContent = { CardGroupIcon(HugeIcons.Settings03, containerColor = containerColor, contentColor = contentColor) },

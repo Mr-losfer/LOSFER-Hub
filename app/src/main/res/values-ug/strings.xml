@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- LOSFER Hub — ئۇيغۇرچە تىل ھۆججىتى -->
+<resources>
+  <string name="app_name">LOSFER Hub</string>
+
+  <!-- 通用 -->
+  <string name="add">قوشۇش</string>
+  <string name="cancel">بىكار قىلىش</string>
+  <string name="confirm">جەزملەشتۈرۈش</string>
+  <string name="delete">ئۆچۈرۈش</string>
+  <string name="settings">تەڭشەكلەر</string>
+
+  <!-- 设置主页面 -->
+  <string name="setting_page_general_settings">ئادەتتىكى تەڭشەكلەر</string>
+  <string name="setting_page_model_and_services">مودېل ۋە مۇلازىمەت</string>
+  <string name="setting_page_data_settings">سانلىق مەلۇمات</string>
+  <string name="setting_page_about">ھەققىدە</string>
+  <string name="setting_page_providers">تەمىنلىگۈچىلەر</string>
+  <string name="setting_page_preferences">مايىللىق تەڭشەكلىرى</string>
+  <string name="setting_page_share">ئەپنى تارقىتىش</string>
+  <string name="setting_page_share_text">LOSFER Hub — ئۇيغۇرچە قوللايدىغان ئەقىللىق Android ياردەمچى\n\nتىلغا ئېلىش ئادرېسى: https://api.losfer.cn</string>
+
+  <!-- 关于页面 -->
+  <string name="about_page_title">ھەققىدە</string>
+  <string name="about_page_version">نەشرى</string>
+  <string name="about_page_system">سىستېما</string>
+  <string name="about_page_website">تور بېتى</string>
+  <string name="about_page_github">GitHub</string>
+  <string name="about_page_license">ئىجازەتنامە</string>
+
+  <!-- LOSFER Hub 专属 -->
+  <string name="losfer_author_label">ئاپتور</string>
+  <string name="losfer_author_name">Mr-losfer</string>
+  <string name="losfer_website_label">LOSFER تور بېكىتى</string>
+  <string name="losfer_api_portal">LOSFER API مەركىزى</string>
+
+  <string name="losfer_quick_access_title">LOSFER بىر كۇنۇپكىلىق ئۇلاش</string>
+  <string name="losfer_quick_access_desc">API كۇنۇپكىڭىزنى كىرگۈزسىڭىز، تەمىنلىگۈچى ۋە مودېللار ئاپتوماتىك قوشۇلىدۇ</string>
+  <string name="losfer_quick_access_dialog_title">LOSFER بىر كۇنۇپكىلىق ئۇلاش</string>
+  <string name="losfer_quick_access_dialog_desc">تۆۋەندىكى ئىشلەتكۈچى ئادرېسىدىن API كۇنۇپكىڭىزنى ئېلىپ، بۇ يەرگە كىرگۈزۈڭ. سىستېما كۇنۇپكىنى دەلىللەپ، OpenAI تۈرىدىكى تەمىنلىگۈچىنى ۋە بارلىق مودېللارنى ئاپتوماتىك قوشىدۇ.</string>
+  <string name="losfer_quick_access_api_key_hint">API كۇنۇپكىسى (ls-...)</string>
+  <string name="losfer_quick_access_how_to_get">API كۇنۇپكىسىنى قانداق ئېلىش كېرەك؟</string>
+  <string name="losfer_quick_access_get_link">https://api.losfer.cn/pc/api-list/keys/</string>
+  <string name="losfer_quick_access_open_portal">API مەركىزىنى ئېچىش</string>
+  <string name="losfer_quick_access_connect">ئۇلاش</string>
+  <string name="losfer_quick_access_checking">دەلىللىنىۋاتىدۇ…</string>
+  <string name="losfer_quick_access_invalid_key">API كۇنۇپكىسى ئىناۋەتسىز، قايتا تەكشۈرۈڭ</string>
+  <string name="losfer_quick_access_empty_key">ئالدى بىلەن API كۇنۇپكىسىنى كىرگۈزۈڭ</string>
+  <string name="losfer_quick_access_network_error">تورغا ئۇلانالمىدى، كېيىنرەك قايتا سىناڭ</string>
+  <string name="losfer_quick_access_success">مۇۋەپپەقىيەتلىك ئۇلاندى، %1$d مودېل قوشۇلدى</string>
+  <string name="losfer_quick_access_updated">تەمىنلىگۈچى يېڭىلاندى، %1$d مودېل قوشۇلدى</string>
+
+  <!-- 欢迎页（首次启动语言选择） -->
+  <string name="losfer_welcome_title">خۇش كەلدىڭىز</string>
+  <string name="losfer_welcome_subtitle">LOSFER Hub</string>
+  <string name="losfer_welcome_desc">ئۆزىڭىز ياخشى كۆرىدىغان تىلنى تاللاڭ. كېيىن تەڭشەكلەردە ئۆزگەرتەلەيسىز.</string>
+  <string name="losfer_welcome_continue">داۋاملاشتۇرۇش</string>
+  <string name="losfer_language_uyghur">ئۇيغۇرچە</string>
+  <string name="losfer_language_chinese">中文（简体）</string>
+  <string name="losfer_language_english">English</string>
+  <string name="losfer_language_system">سىستېما تىلى</string>
+
+  <!-- 语言与字体页面 -->
+  <string name="losfer_language_font_page_title">تىل ۋە خەت نۇسخا</string>
+  <string name="losfer_language_section">ئىنتېرفېيس تىلى</string>
+  <string name="losfer_language_desc">ئەپنىڭ كۆرۈنۈش تىلىنى تاللاڭ</string>
+  <string name="losfer_font_section">ئۇيغۇرچە خەت نۇسخا</string>
+  <string name="losfer_font_enable">ئۇيغۇرچە خەت نۇسخىنى ئىشلىتىش</string>
+  <string name="losfer_font_enable_desc">ئىنتېرفېيستىكى ئۇيغۇرچە تېكىستلەر تاللانغان خەت نۇسخىدا كۆرسىتىلىدۇ</string>
+  <string name="losfer_font_default_badge">سۈكۈتتىكى</string>
+  <string name="losfer_font_preview">نۇمۇنە: ياخشىمۇسىز، بۇ خەت نۇسخىنىڭ كۆرۈنۈشى.</string>
+  <string name="losfer_font_reset">سۈكۈتتىكى خەت نۇسخىغا قايتۇرۇش</string>
+  <string name="losfer_font_copyright">خەت نۇسخا ھوقۇقى ئەسلى ئاپتورىغا تەۋە، پەقەت ئۆگىنىش ۋە ئالماشتۇرۇش ئۈچۈن.</string>
+  <string name="losfer_rtl_desc">ئۇيغۇرچە تاللانغاندا ئىنتېرفېيس ئاپتوماتىك RTL (ئوڭدىن سولغا) يۆنىلىشتە كۆرسىتىلىدۇ</string>
+</resources>

@@ -172,6 +172,12 @@ internal val SETTINGS_FIELDS: List<SettingsField<*, *>> = with(SettingsStore) {
 
         // 赞助提醒
         plain(SPONSOR_ALERT_DISMISSED_AT, Settings::sponsorAlertDismissedAt) { copy(sponsorAlertDismissedAt = it) },
+
+        // LOSFER Hub：语言与维吾尔语字体
+        plain(APP_LANGUAGE, Settings::appLanguage) { copy(appLanguage = it) },
+        plain(LANGUAGE_ONBOARDING_DONE, Settings::languageOnboardingDone) { copy(languageOnboardingDone = it) },
+        plain(UYGHUR_FONT_ID, Settings::uyghurFontId) { copy(uyghurFontId = it) },
+        plain(USE_UYGHUR_FONT, Settings::useUyghurFont) { copy(useUyghurFont = it) },
     )
 }
 

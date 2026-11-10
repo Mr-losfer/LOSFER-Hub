@@ -9,6 +9,7 @@ import me.rerere.rikkahub.data.ai.ChatRequestFactory
 import me.rerere.rikkahub.data.ai.tools.ChatToolFactory
 import me.rerere.rikkahub.data.ai.tools.local.LocalTools
 import me.rerere.rikkahub.data.event.AppEventBus
+import me.rerere.rikkahub.data.losfer.LosferService
 import me.rerere.rikkahub.service.BackgroundShellManager
 import me.rerere.rikkahub.service.ChatFloatingTracker
 import me.rerere.rikkahub.service.ChatNotificationManager
@@ -53,6 +54,11 @@ val appModule = module {
 
     single {
         TTSManager(get())
+    }
+
+    // LOSFER Hub：LOSFER 平台接入（密钥校验 + 自动添加提供商）
+    single {
+        LosferService(client = get())
     }
 
     single {

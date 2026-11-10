@@ -44,6 +44,7 @@ import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalScrollCaptureInProgress
 import androidx.compose.ui.unit.Dp
@@ -115,75 +116,79 @@ fun ChatList(
     val showPreview by remember { derivedStateOf { previewProgress.value > 0f } }
     val showNormal by remember { derivedStateOf { previewProgress.value < 1f } }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .clipToBounds()
-            .previewSwipeGesture(
-                progress = previewProgress,
-                scope = scope,
-                layoutDirection = layoutDirection,
-                canEnterPreview = { currentConversation.messageNodes.isNotEmpty() },
-                isPreviewMode = { currentPreviewMode },
-                onPreviewModeChange = { currentOnPreviewModeChange(it) },
-            ),
-    ) {
-        // 两页像翻页一样整体平移：聊天页向左滑出，概览页从右侧跟进
+    // LOSFER Hub：聊天内容区固定 LTR（消息左对齐、排版与原版一致），
+    // 只有顶部栏、抽屉等外层界面跟随维吾尔语的 RTL，避免气泡方向被整体镜像
+    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .graphicsLayer {
-                    val p = previewProgress.value
-                    translationX = -p * size.width * layoutDirectionSign
-                    alpha = if (showNormal) 1f - p * 0.4f else 0f
-                },
+                .clipToBounds()
+                .previewSwipeGesture(
+                    progress = previewProgress,
+                    scope = scope,
+                    layoutDirection = layoutDirection,
+                    canEnterPreview = { currentConversation.messageNodes.isNotEmpty() },
+                    isPreviewMode = { currentPreviewMode },
+                    onPreviewModeChange = { currentOnPreviewModeChange(it) },
+                ),
         ) {
-            ChatListNormal(
-                innerPadding = innerPadding,
-                conversation = conversation,
-                state = state,
-                loading = loading,
-                processingStatus = processingStatus,
-                settings = settings,
-                hazeState = hazeState,
-                errors = errors,
-                onDismissError = onDismissError,
-                onClearAllErrors = onClearAllErrors,
-                onRegenerate = onRegenerate,
-                onEdit = onEdit,
-                onForkMessage = onForkMessage,
-                onDelete = onDelete,
-                onUpdateMessage = onUpdateMessage,
-                onClickSuggestion = onClickSuggestion,
-                onTranslate = onTranslate,
-                onClearTranslation = onClearTranslation,
-                onToolApproval = onToolApproval,
-                onToolAnswer = onToolAnswer,
-                onToggleFavorite = onToggleFavorite,
-                onConversationSystemPromptChange = onConversationSystemPromptChange,
-                selectionState = selectionState,
-            )
-        }
-
-        if (showPreview) {
+            // 两页像翻页一样整体平移：聊天页向左滑出，概览页从右侧跟进
             Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .graphicsLayer {
                         val p = previewProgress.value
-                        translationX = (1f - p) * size.width * layoutDirectionSign
-                        alpha = 0.4f + p * 0.6f
+                        translationX = -p * size.width * layoutDirectionSign
+                        alpha = if (showNormal) 1f - p * 0.4f else 0f
                     },
             ) {
-                ChatListPreview(
+                ChatListNormal(
                     innerPadding = innerPadding,
                     conversation = conversation,
-                    chatListState = state,
-                    listState = previewListState,
+                    state = state,
+                    loading = loading,
+                    processingStatus = processingStatus,
                     settings = settings,
                     hazeState = hazeState,
-                    onJumpToMessage = onJumpToMessage,
+                    errors = errors,
+                    onDismissError = onDismissError,
+                    onClearAllErrors = onClearAllErrors,
+                    onRegenerate = onRegenerate,
+                    onEdit = onEdit,
+                    onForkMessage = onForkMessage,
+                    onDelete = onDelete,
+                    onUpdateMessage = onUpdateMessage,
+                    onClickSuggestion = onClickSuggestion,
+                    onTranslate = onTranslate,
+                    onClearTranslation = onClearTranslation,
+                    onToolApproval = onToolApproval,
+                    onToolAnswer = onToolAnswer,
+                    onToggleFavorite = onToggleFavorite,
+                    onConversationSystemPromptChange = onConversationSystemPromptChange,
+                    selectionState = selectionState,
                 )
+            }
+
+            if (showPreview) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .graphicsLayer {
+                            val p = previewProgress.value
+                            translationX = (1f - p) * size.width * layoutDirectionSign
+                            alpha = 0.4f + p * 0.6f
+                        },
+                ) {
+                    ChatListPreview(
+                        innerPadding = innerPadding,
+                        conversation = conversation,
+                        chatListState = state,
+                        listState = previewListState,
+                        settings = settings,
+                        hazeState = hazeState,
+                        onJumpToMessage = onJumpToMessage,
+                    )
+                }
             }
         }
     }

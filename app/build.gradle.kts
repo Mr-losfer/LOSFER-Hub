@@ -27,8 +27,8 @@ android {
         applicationId = "cn.losfer.aihub"
         minSdk = 26
         targetSdk = 37
-        versionCode = 201
-        versionName = "1.0.1"
+        versionCode = 202
+        versionName = "1.0.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 

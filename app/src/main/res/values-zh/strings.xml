@@ -1866,4 +1866,18 @@ mDNS 地址：使用 .local 主机名，同一网络中的其他设备可通过�
 
   <string name="losfer_provider_description">专为新疆地区提供最稳定服务的提供商之一。兼容 OpenAI 协议，一键接入即可使用。</string>
   <string name="losfer_provider_short_description">专为新疆地区提供最稳定服务的提供商之一</string>
+
+  <!-- LOSFER 技能库 -->
+  <string name="skills_page_download_library">下载 LOSFER 技能库</string>
+  <string name="skills_page_download_library_desc">通过 gh-proxy.com 加速代理，一键下载技能库中的全部技能</string>
+  <string name="skills_page_downloading_library">正在下载技能库...</string>
+  <string name="skills_page_library_imported">已导入 %1$d 个技能</string>
+  <string name="skills_page_library_imported_partial">已导入 %1$d 个技能，跳过 %2$d 个</string>
+  <string name="skills_page_library_zip_failed">技能库下载失败：%1$s</string>
+  <string name="skills_page_library_no_skill">技能库中未找到可用技能</string>
+  <string name="skills_page_library_failed">技能库出错：%1$s</string>
+  <string name="skills_page_enable_all">全开</string>
+  <string name="skills_page_disable_all">全关</string>
+  <string name="skills_page_enabled_count">已启用 %1$d / %2$d</string>
+  <string name="skills_page_toggle_skill">开启/关闭技能</string>
 </resources>

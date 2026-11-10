@@ -6,17 +6,24 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import me.rerere.rikkahub.R
+import me.rerere.rikkahub.data.datastore.SettingsStore
 import me.rerere.rikkahub.data.files.FileUtils
 import me.rerere.rikkahub.data.skills.InvalidSkillDir
 import me.rerere.rikkahub.data.skills.SkillManager
 import me.rerere.rikkahub.data.skills.SkillMetadata
 import me.rerere.rikkahub.data.skills.SkillValidationException
 import me.rerere.rikkahub.data.skills.SkillValidator
+import me.rerere.rikkahub.utils.LosferInfo
 import org.json.JSONArray
+import org.json.JSONObject
 import java.io.ByteArrayInputStream
 import java.net.HttpURLConnection
 import java.net.URL
@@ -27,12 +34,21 @@ import kotlin.collections.iterator
 class SkillsVM(
     private val context: Application,
     private val skillManager: SkillManager,
+    private val settingsStore: SettingsStore,
 ) : ViewModel() {
     private val _skills = MutableStateFlow<List<SkillMetadata>>(emptyList())
     val skills = _skills.asStateFlow()
 
     private val _invalidSkillDirs = MutableStateFlow<List<InvalidSkillDir>>(emptyList())
     val invalidSkillDirs = _invalidSkillDirs.asStateFlow()
+
+    private val _libraryDownloading = MutableStateFlow(false)
+    val libraryDownloading: StateFlow<Boolean> = _libraryDownloading.asStateFlow()
+
+    /** 所有助手启用过的技能名并集，用于技能页的开关状态 */
+    val enabledSkillNames: StateFlow<Set<String>> = settingsStore.settingsFlow
+        .map { settings -> settings.assistants.flatMap { it.enabledSkills }.toSet() }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptySet())
 
     init {
         loadSkills()
@@ -47,6 +63,173 @@ class SkillsVM(
     private fun refreshSkills() {
         _skills.value = skillManager.listSkills()
         _invalidSkillDirs.value = skillManager.listInvalidSkillDirs()
+    }
+
+    /**
+     * 下载 LOSFER 技能库：先读仓库根目录的 skill-sources.json（走加速代理），
+     * 再按清单把每个 GitHub 仓库整包下载，批量导入包内所有 SKILL.md。
+     * 清单读不到时退回内置默认技能库，保证按钮始终可用。
+     */
+    fun downloadSkillLibrary(onResult: (Boolean, String) -> Unit) {
+        if (_libraryDownloading.value) return
+        viewModelScope.launch(Dispatchers.IO) {
+            _libraryDownloading.value = true
+            try {
+                val config = downloadBytes(LosferInfo.SKILL_LIBRARY_CONFIG)?.toString(Charsets.UTF_8)
+                val repos = config?.let { parseSkillRepoUrls(it) }
+                    ?.takeIf { it.isNotEmpty() }
+                    ?: listOf(LosferInfo.DEFAULT_SKILL_LIBRARY_REPO)
+
+                val imported = mutableListOf<String>()
+                val skipped = mutableListOf<String>()
+                val failedRepos = mutableListOf<String>()
+
+                for (repo in repos) {
+                    val outcome = runCatching {
+                        var zip: ByteArray? = null
+                        for (zipUrl in skillZipCandidates(repo)) {
+                            val bytes = downloadBytes(zipUrl)
+                            if (bytes != null && isZipFile("", bytes)) {
+                                zip = bytes
+                                break
+                            }
+                        }
+                        val archive = zip ?: error("zip download failed: $repo")
+                        importSkillEntries(readZipFiles(archive), failFast = false)
+                    }
+                    outcome.onSuccess { (ok, bad) ->
+                        imported += ok
+                        skipped += bad
+                    }.onFailure {
+                        failedRepos += repo
+                    }
+                }
+
+                refreshSkills()
+                val total = imported.distinct().size
+                withContext(Dispatchers.Main) {
+                    when {
+                        total == 0 && failedRepos.isNotEmpty() ->
+                            onResult(
+                                false,
+                                context.getString(R.string.skills_page_library_zip_failed, failedRepos.first())
+                            )
+
+                        total == 0 ->
+                            onResult(false, context.getString(R.string.skills_page_library_no_skill))
+
+                        failedRepos.isEmpty() && skipped.isEmpty() ->
+                            onResult(true, context.getString(R.string.skills_page_library_imported, total))
+
+                        else ->
+                            onResult(
+                                true,
+                                context.getString(
+                                    R.string.skills_page_library_imported_partial,
+                                    total,
+                                    skipped.size + failedRepos.size,
+                                )
+                            )
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                withContext(Dispatchers.Main) {
+                    onResult(
+                        false,
+                        context.getString(
+                            R.string.skills_page_library_failed,
+                            e.message ?: context.getString(R.string.skills_page_unknown_error),
+                        )
+                    )
+                }
+            } finally {
+                _libraryDownloading.value = false
+            }
+        }
+    }
+
+    /** 全开 / 全关：一次把所有助手的技能开关统一设置 */
+    fun setAllSkillsEnabled(enabled: Boolean) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val names = skillManager.listSkills().map { it.name }.toSet()
+            settingsStore.update { settings ->
+                settings.copy(
+                    assistants = settings.assistants.map { assistant ->
+                        assistant.copy(enabledSkills = if (enabled) names else emptySet())
+                    }
+                )
+            }
+        }
+    }
+
+    fun setSkillEnabled(name: String, enabled: Boolean) {
+        viewModelScope.launch(Dispatchers.IO) {
+            settingsStore.update { settings ->
+                settings.copy(
+                    assistants = settings.assistants.map { assistant ->
+                        val updated = if (enabled) {
+                            (assistant.enabledSkills + name).toSet()
+                        } else {
+                            (assistant.enabledSkills - name).toSet()
+                        }
+                        assistant.copy(enabledSkills = updated)
+                    }
+                )
+            }
+        }
+    }
+
+    /** 支持 json 对象 / json 数组 / 每行一个 URL 的 txt，统一提取 GitHub 仓库链接 */
+    private fun parseSkillRepoUrls(config: String): List<String> {
+        val urls = mutableListOf<String>()
+        val trimmed = config.trim()
+
+        fun collectArray(array: JSONArray) {
+            for (i in 0 until array.length()) {
+                when (val item = array.opt(i)) {
+                    is String -> urls += item
+                    is JSONObject -> item.optString("url").takeIf { it.isNotBlank() }?.let { urls += it }
+                }
+            }
+        }
+
+        runCatching {
+            when {
+                trimmed.startsWith("{") -> {
+                    val obj = JSONObject(trimmed)
+                    listOf("repositories", "repos", "urls", "sources").forEach { key ->
+                        obj.optJSONArray(key)?.let { collectArray(it) }
+                    }
+                }
+
+                trimmed.startsWith("[") -> collectArray(JSONArray(trimmed))
+
+                else -> trimmed.lineSequence().forEach { line ->
+                    val value = line.trim().trim(',', '"')
+                    if (value.startsWith("http") && !value.startsWith("#")) urls += value
+                }
+            }
+        }
+        // 兜底：即便配置文件换了格式，也能直接从文本里认出仓库地址
+        GITHUB_REPO_PATTERN.findAll(config).forEach { urls += it.value }
+
+        return urls.map { it.trim().trimEnd('/') }
+            .filter { it.startsWith("https://github.com/") }
+            .distinct()
+    }
+
+    /** 依次尝试清单里指定的分支、main、master，避免依赖容易限流的 GitHub API */
+    private fun skillZipCandidates(repoUrl: String): List<String> {
+        val info = parseGitHubUrl(repoUrl) ?: return emptyList()
+        val branches = buildList {
+            if (info.branch != "HEAD") add(info.branch)
+            add("main")
+            add("master")
+        }.distinct()
+        return branches.map { branch ->
+            "https://github.com/${info.owner}/${info.repo}/archive/refs/heads/$branch.zip"
+        }
     }
 
     fun deleteInvalidSkillDir(dirName: String) {
@@ -199,7 +382,10 @@ class SkillsVM(
         return listOf(saved.name)
     }
 
-    private fun importSkillsFromZip(bytes: ByteArray): List<String> {
+    private fun importSkillsFromZip(bytes: ByteArray): List<String> =
+        importSkillEntries(readZipFiles(bytes), failFast = true).first
+
+    private fun readZipFiles(bytes: ByteArray): LinkedHashMap<String, ByteArray> {
         val files = LinkedHashMap<String, ByteArray>()
         ZipInputStream(ByteArrayInputStream(bytes)).use { zipInput ->
             while (true) {
@@ -216,7 +402,19 @@ class SkillsVM(
                 }
             }
         }
+        return files
+    }
 
+    /**
+     * 把压缩包里的每个技能落盘。
+     * failFast = true 用于手动导入（遇到不合规技能整体失败并提示原因）；
+     * false 用于技能库批量下载（跳过坏技能，其余继续导入）。
+     * 返回「成功导入的技能名」和「跳过的 SKILL.md 路径」。
+     */
+    private fun importSkillEntries(
+        files: LinkedHashMap<String, ByteArray>,
+        failFast: Boolean,
+    ): Pair<List<String>, List<String>> {
         val skillMdPaths = files.keys
             .filter { it.substringAfterLast('/').equals("SKILL.md", ignoreCase = true) }
             .sorted()
@@ -228,31 +426,46 @@ class SkillsVM(
         }
 
         val importedNames = mutableListOf<String>()
+        val skippedPaths = mutableListOf<String>()
         for (skillMdPath in skillMdPaths) {
-            val skillContent = files[skillMdPath]?.toString(Charsets.UTF_8)
-                ?: error(context.getString(R.string.skills_page_import_error_read_entry, skillMdPath))
-            val name = SkillValidator.validate(skillContent).getOrElse { error(invalidFormatMessage(skillMdPath, it)) }
-
-            val basePath = skillMdPath.substringBeforeLast('/', missingDelimiterValue = "")
-            val skillFiles = LinkedHashMap<String, ByteArray>()
-            for ((path, content) in files) {
-                if (isInsideNestedSkill(path, basePath, skillBasePaths)) continue
-                val relativePath = relativeToSkillBase(path, basePath) ?: continue
-                val targetPath = if (relativePath.equals("SKILL.md", ignoreCase = true)) {
-                    "SKILL.md"
-                } else {
-                    relativePath
+            val result = runCatching { saveSkillEntry(files, skillMdPath, skillBasePaths) }
+            result.onSuccess { importedNames += it }
+                .onFailure {
+                    if (failFast) throw it
+                    skippedPaths += skillMdPath
                 }
-                skillFiles[targetPath] = content
-            }
-
-            val saved = skillManager.saveSkillFileBytesAtomically(name, skillFiles)
-            if (!saved) {
-                error(context.getString(R.string.skills_page_import_error_save_failed, name))
-            }
-            importedNames += name
         }
-        return importedNames.distinct()
+        return importedNames.distinct() to skippedPaths
+    }
+
+    private fun saveSkillEntry(
+        files: LinkedHashMap<String, ByteArray>,
+        skillMdPath: String,
+        skillBasePaths: List<String>,
+    ): String {
+        val skillContent = files[skillMdPath]?.toString(Charsets.UTF_8)
+            ?: error(context.getString(R.string.skills_page_import_error_read_entry, skillMdPath))
+        val name = SkillValidator.validate(skillContent)
+            .getOrElse { error(invalidFormatMessage(skillMdPath, it)) }
+
+        val basePath = skillMdPath.substringBeforeLast('/', missingDelimiterValue = "")
+        val skillFiles = LinkedHashMap<String, ByteArray>()
+        for ((path, content) in files) {
+            if (isInsideNestedSkill(path, basePath, skillBasePaths)) continue
+            val relativePath = relativeToSkillBase(path, basePath) ?: continue
+            val targetPath = if (relativePath.equals("SKILL.md", ignoreCase = true)) {
+                "SKILL.md"
+            } else {
+                relativePath
+            }
+            skillFiles[targetPath] = content
+        }
+
+        val saved = skillManager.saveSkillFileBytesAtomically(name, skillFiles)
+        if (!saved) {
+            error(context.getString(R.string.skills_page_import_error_save_failed, name))
+        }
+        return name
     }
 
     private fun isInsideNestedSkill(path: String, basePath: String, skillBasePaths: List<String>): Boolean {
@@ -347,20 +560,46 @@ class SkillsVM(
         return GitHubRepoInfo(owner, repo, branch, subPath)
     }
 
+    /**
+     * 所有 GitHub 相关请求都优先走 gh-proxy.com 加速代理，失败再直连。
+     * 技能库压缩包、SKILL.md、附属脚本都能在国内网络下正常下载。
+     */
     private fun downloadBytes(url: String): ByteArray? {
-        val connection = URL(url).openConnection() as HttpURLConnection
-        connection.connectTimeout = 10_000
-        connection.readTimeout = 30_000
-        connection.setRequestProperty("Accept", "application/vnd.github+json")
-        return try {
-            val code = connection.responseCode
-            // 未登录的 GitHub API 每小时仅 60 次，超限时给出明确提示而不是笼统的"读取失败"
-            if ((code == 403 || code == 429) && connection.getHeaderField("X-RateLimit-Remaining") == "0") {
-                error(context.getString(R.string.skills_page_import_error_github_rate_limit))
-            }
-            if (code == 200) connection.inputStream.use { it.readBytes() } else null
-        } finally {
-            connection.disconnect()
+        val candidates = if (url.startsWith(LosferInfo.GH_PROXY)) {
+            listOf(url)
+        } else {
+            listOf(LosferInfo.proxied(url), url)
         }
+        var rateLimited = false
+        for (candidate in candidates) {
+            try {
+                val connection = URL(candidate).openConnection() as HttpURLConnection
+                connection.connectTimeout = 10_000
+                connection.readTimeout = 60_000
+                connection.setRequestProperty("Accept", "application/vnd.github+json")
+                try {
+                    val code = connection.responseCode
+                    // 未登录的 GitHub API 每小时仅 60 次，超限时给出明确提示而不是笼统的"读取失败"
+                    if ((code == 403 || code == 429) && connection.getHeaderField("X-RateLimit-Remaining") == "0") {
+                        rateLimited = true
+                        continue
+                    }
+                    if (code == 200) return connection.inputStream.use { it.readBytes() }
+                } finally {
+                    connection.disconnect()
+                }
+            } catch (e: Exception) {
+                // 代理不可用时继续尝试下一个地址
+            }
+        }
+        if (rateLimited) {
+            error(context.getString(R.string.skills_page_import_error_github_rate_limit))
+        }
+        return null
+    }
+
+    companion object {
+        private val GITHUB_REPO_PATTERN =
+            Regex("""https://github\.com/[\w.\-]+/[\w.\-]+(?:/tree/[\w.\-/]+)?""")
     }
 }

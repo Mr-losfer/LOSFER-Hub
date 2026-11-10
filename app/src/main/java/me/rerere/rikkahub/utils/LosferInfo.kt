@@ -14,7 +14,18 @@ object LosferInfo {
     val GITHUB_URL = "https://github.com/$GITHUB_OWNER/$GITHUB_REPO"
     val GITHUB_RELEASES_URL = "$GITHUB_URL/releases"
     val GITHUB_API_LATEST_RELEASE = "https://api.github.com/repos/$GITHUB_OWNER/$GITHUB_REPO/releases/latest"
-    val GITHUB_LICENSE_URL = "$GITHUB_URL/blob/master/LICENSE"
+    val GITHUB_LICENSE_URL = "$GITHUB_URL/blob/main/LICENSE"
+
+    /**
+     * 技能库清单。放在仓库根目录的 skill-sources.json（也可以是同位置的 txt），
+     * 客户端点「下载 LOSFER 技能库」时先读它，再按清单批量导入技能。
+     * 改清单即可增减技能源，不需要重新发版。
+     */
+    val SKILL_LIBRARY_CONFIG =
+        "https://raw.githubusercontent.com/$GITHUB_OWNER/$GITHUB_REPO/main/skill-sources.json"
+
+    /** 清单读取失败时的内置兜底技能库 */
+    const val DEFAULT_SKILL_LIBRARY_REPO = "https://github.com/NoraStory/reverse-SKILL"
 
     /**
      * 国内可用的 GitHub 加速代理。更新检测与 APK 下载都优先走它，

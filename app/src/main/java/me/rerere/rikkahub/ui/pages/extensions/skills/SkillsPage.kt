@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularWavyProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -24,9 +25,11 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeFlexibleTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -45,6 +48,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.ImeAction
@@ -88,6 +93,8 @@ fun SkillsPage() {
     val navController = LocalNavController.current
     val vm = koinViewModel<SkillsVM>()
     val skills by vm.skills.collectAsStateWithLifecycle()
+    val downloadingLibrary by vm.libraryDownloading.collectAsStateWithLifecycle()
+    val enabledSkillNames by vm.enabledSkillNames.collectAsStateWithLifecycle()
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val toaster = LocalToaster.current
     val context = LocalContext.current
@@ -151,6 +158,80 @@ fun SkillsPage() {
             ),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
+            // LOSFER Hub：页面最上面的技能库入口，以及全开 / 全关
+            item(key = "losfer_library_actions") {
+                Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                    Surface(
+                        onClick = {
+                            if (!downloadingLibrary) {
+                                vm.downloadSkillLibrary { _, message -> toaster.show(message) }
+                            }
+                        },
+                        enabled = !downloadingLibrary,
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(20.dp),
+                        color = CustomColors.listItemColors.containerColor,
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            CardGroupIcon(HugeIcons.Download01)
+                            Column(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .padding(horizontal = 16.dp),
+                                verticalArrangement = Arrangement.spacedBy(2.dp),
+                            ) {
+                                Text(
+                                    text = stringResource(
+                                        if (downloadingLibrary) {
+                                            R.string.skills_page_downloading_library
+                                        } else {
+                                            R.string.skills_page_download_library
+                                        }
+                                    ),
+                                    style = MaterialTheme.typography.bodyLarge,
+                                )
+                                Text(
+                                    text = stringResource(R.string.skills_page_download_library_desc),
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                )
+                            }
+                            if (downloadingLibrary) {
+                                CircularWavyProgressIndicator(modifier = Modifier.size(20.dp))
+                            }
+                        }
+                    }
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Button(onClick = { vm.setAllSkillsEnabled(true) }) {
+                            Text(stringResource(R.string.skills_page_enable_all))
+                        }
+                        OutlinedButton(onClick = { vm.setAllSkillsEnabled(false) }) {
+                            Text(stringResource(R.string.skills_page_disable_all))
+                        }
+                        Text(
+                            text = stringResource(
+                                R.string.skills_page_enabled_count,
+                                skills.count { it.name in enabledSkillNames },
+                                skills.size,
+                            ),
+                            modifier = Modifier.weight(1f),
+                            textAlign = TextAlign.End,
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                }
+            }
+
             if (skills.isEmpty()) {
                 item {
                     ExtensionEmptyState(
@@ -207,6 +288,8 @@ fun SkillsPage() {
             items(filteredSkills, key = { it.skillDir.absolutePath }) { skill ->
                 SkillCard(
                     skill = skill,
+                    enabled = skill.name in enabledSkillNames,
+                    onToggleEnabled = { vm.setSkillEnabled(skill.name, it) },
                     onClick = { navController.navigate(Screen.SkillDetail(skill.name)) },
                     onDelete = { deleteTarget = skill },
                 )
@@ -372,9 +455,12 @@ private fun InvalidSkillDirsGroup(
 @Composable
 private fun SkillCard(
     skill: SkillMetadata,
+    enabled: Boolean,
+    onToggleEnabled: (Boolean) -> Unit,
     onClick: () -> Unit,
     onDelete: () -> Unit,
 ) {
+    val toggleLabel = stringResource(R.string.skills_page_toggle_skill)
     Surface(
         onClick = onClick,
         modifier = Modifier.fillMaxWidth(),
@@ -384,7 +470,7 @@ private fun SkillCard(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 16.dp, top = 12.dp, bottom = 12.dp, end = if (skill.builtin) 16.dp else 4.dp),
+                .padding(start = 16.dp, top = 12.dp, bottom = 12.dp, end = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             CardGroupIcon(HugeIcons.Puzzle)
@@ -424,6 +510,12 @@ private fun SkillCard(
                     )
                 }
             }
+            // 技能开关作用于所有助手；内置技能也能启用 / 停用，只是不能删除
+            Switch(
+                checked = enabled,
+                onCheckedChange = onToggleEnabled,
+                modifier = Modifier.semantics { contentDescription = toggleLabel },
+            )
             // 内置技能只读，不提供删除
             if (!skill.builtin) {
                 ItemActionMenu(

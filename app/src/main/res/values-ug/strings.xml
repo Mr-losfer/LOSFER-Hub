@@ -1862,4 +1862,18 @@
   <string name="losfer_rtl_desc">ئۇيغۇرچە تاللانغاندا، كۆرۈنمە يۈز ئاپتوماتىك RTL بولىدۇ</string>
   <string name="losfer_provider_description">شىنجاڭ رايونىغا ئاتاپ قۇرۇلغان ئەڭ مۇقىم تەمىنلىگۈچىلەرنىڭ بىرى. OpenAI غا ماس: API ئاچقۇچىڭىز بىلەن ئۇلىنىپ دەرھال سۆھبەتلىشەلەيسىز.</string>
   <string name="losfer_provider_short_description">شىنجاڭ رايونىغا ئاتاپ قۇرۇلغان ئەڭ مۇقىم تەمىنلىگۈچىلەرنىڭ بىرى</string>
+
+  <!-- LOSFER ماھارەت ئامبىرى -->
+  <string name="skills_page_download_library">LOSFER ماھارەت ئامبىرىنى چۈشۈرۈش</string>
+  <string name="skills_page_download_library_desc">gh-proxy.com تېزلىك ۋاكالەتچىسى ئارقىلىق ئامباردىكى بارلىق ماھارەتلەرنى بىر قېتىمدا قوشىدۇ</string>
+  <string name="skills_page_downloading_library">ماھارەت ئامبىرى چۈشۈرۈلۈۋاتىدۇ...</string>
+  <string name="skills_page_library_imported">%1$d ماھارەت قوشۇلدى</string>
+  <string name="skills_page_library_imported_partial">%1$d ماھارەت قوشۇلدى، %2$d ى ئاتلاپ ئۆتۈلدى</string>
+  <string name="skills_page_library_zip_failed">ماھارەت ئامبىرىنى چۈشۈرۈش مەغلۇپ بولدى: %1$s</string>
+  <string name="skills_page_library_no_skill">ئامباردا ئىشلىتىشكە بولىدىغان ماھارەت تېپىلمىدى</string>
+  <string name="skills_page_library_failed">ماھارەت ئامبىرىدا خاتالىق: %1$s</string>
+  <string name="skills_page_enable_all">ھەممىنى ئېچىش</string>
+  <string name="skills_page_disable_all">ھەممىنى تاقاش</string>
+  <string name="skills_page_enabled_count">%1$d / %2$d ئېچىلغان</string>
+  <string name="skills_page_toggle_skill">ماھارەتنى ئېچىش / تاقاش</string>
 </resources>

@@ -90,8 +90,8 @@
 ## 🚀 ئاپتوماتىك يېڭى نەشرى چىقىرىش
 
 ```bash
-git tag v1.0.3
-git push origin v1.0.3
+git tag v1.0.4
+git push origin v1.0.4
 ```
 
 GitHub Actions ئاپتوماتىك APK ياساپ، Release قا يۈكلەيدۇ. ئەپ ئىچىدىكى يېڭىلاش تەكشۈرۈشىمۇ مۇشۇ Release نى ئوقۇيدۇ.

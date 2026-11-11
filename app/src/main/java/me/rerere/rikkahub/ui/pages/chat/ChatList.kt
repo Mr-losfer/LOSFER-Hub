@@ -148,6 +148,7 @@ fun ChatList(
                     conversation = conversation,
                     state = state,
                     loading = loading,
+                    compressing = compressing,
                     processingStatus = processingStatus,
                     settings = settings,
                     hazeState = hazeState,

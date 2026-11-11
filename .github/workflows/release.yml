@@ -75,5 +75,5 @@ jobs:
 
             - ئاستىدىكى APK نى چۈشۈرۈپ قاچىلاڭ.
           files: |
-            app/build/outputs/apk/github/release/*.apk
+            app/build/outputs/apk/github/release/*arm64-v8a*.apk
             app/build/outputs/mapping/githubRelease/mapping.txt

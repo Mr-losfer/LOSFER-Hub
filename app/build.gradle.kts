@@ -32,10 +32,7 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        // LOSFER Hub：正式包只发布 arm64-v8a，减小包体、加快构建
-        ndk {
-            abiFilters += listOf("arm64-v8a")
-        }
+        // LOSFER Hub：正式包只发布 arm64-v8a（ABI 由下面的 splits 控制）
     }
 
     splits {

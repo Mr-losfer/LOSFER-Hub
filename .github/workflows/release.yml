@@ -65,6 +65,13 @@ jobs:
           chmod +x gradlew
           ./gradlew :app:assembleGithubRelease --no-daemon
 
+      - name: APK نىڭ نامىنى تەرتىپلەش
+        run: |
+          mkdir -p dist
+          cp app/build/outputs/apk/github/release/*arm64-v8a*.apk \
+             "dist/LOSFER-Hub-${GITHUB_REF_NAME}-arm64-v8a.apk"
+          ls -lh dist
+
       - name: Release قا يۈكلەش
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
@@ -75,5 +82,4 @@ jobs:
 
             - ئاستىدىكى APK نى چۈشۈرۈپ قاچىلاڭ.
           files: |
-            app/build/outputs/apk/github/release/*arm64-v8a*.apk
-            app/build/outputs/mapping/githubRelease/mapping.txt
+            dist/*.apk

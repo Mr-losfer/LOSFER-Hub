@@ -1949,7 +1949,7 @@
   <string name="quick_start_page_start_chat">سۆھبەتنى باشلاش</string>
   <string name="quick_start_page_required_steps">تەلەپ قىلىنىدىغان قەدەملەر</string>
   <string name="quick_start_page_provider_title">تەمىنلىگۈچى تەڭشەش</string>
-  <string name="quick_start_page_provider_desc">تەمىنلىگۈچى مودېللارنىڭ مەنبەسى. تەمىنلىگۈچى تىزىملىكىدىن بىر مۇلازىمەت (مەسىلەن DeepSeek، SiliconFlow ياكى OpenRouter) تاللاپ، تور بېتىدىكى API ئاچقۇچىنى كىرگۈزۈڭ، ئاندىن مودېل بېتىدە كېرەكلىك مودېللارنى قوشۇڭ. ھەمبەھرىلەنگەن سەپلىمىنى QR كود ئارقىلىق ئىمپورت قىلسىڭىزمۇ بولىدۇ.</string>
+  <string name="quick_start_page_provider_desc">تەمىنلىگۈچى مودېللارنىڭ مەنبەسى. «LOSFER بىر كۇنۇپكىلىق ئۇلاش» نى بېسىپ API ئاچقۇچىڭىزنى كىرگۈزسىڭىز، تەمىنلىگۈچى ۋە بارلىق ئىشلەتكىلى بولىدىغان مودېللار ئاپتوماتىك قوشۇلىدۇ. تەمىنلىگۈچىلەرنى قولدا باشقۇرسىڭىزمۇ بولىدۇ.</string>
   <string name="quick_start_page_provider_summary">ئىشلەتكىلى بولىدىغان تەمىنلىگۈچى: %1$d، مودېل: %2$d</string>
   <string name="quick_start_page_provider_manage">تەمىنلىگۈچىلەرنى باشقۇرۇش</string>
   <string name="quick_start_page_provider_go">تەڭشەش</string>

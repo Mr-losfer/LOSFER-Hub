@@ -1951,7 +1951,7 @@
   <string name="quick_start_page_start_chat">Start chatting</string>
   <string name="quick_start_page_required_steps">Required steps</string>
   <string name="quick_start_page_provider_title">Set up a provider</string>
-  <string name="quick_start_page_provider_desc">A provider is where models come from. Pick a service from the provider list (such as DeepSeek, SiliconFlow or OpenRouter), enter the API key from its website, then add the models you want on the Models page. You can also scan a QR code to import a shared configuration.</string>
+  <string name="quick_start_page_provider_desc">A provider is where models come from. Tap LOSFER one-tap connect, paste your API key, and the provider plus every available model is added automatically. You can also manage providers manually.</string>
   <string name="quick_start_page_provider_summary">Available providers: %1$d, models: %2$d</string>
   <string name="quick_start_page_provider_manage">Manage providers</string>
   <string name="quick_start_page_provider_go">Set up</string>

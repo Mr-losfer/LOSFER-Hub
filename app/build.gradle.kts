@@ -1,6 +1,7 @@
 import com.android.build.api.dsl.Packaging
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import java.io.File
 import java.io.FileInputStream
 import java.util.Properties
 
@@ -9,8 +10,12 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
-    alias(libs.plugins.google.services)
-    alias(libs.plugins.firebase.crashlytics)
+    // LOSFER Hub：没有自己的 Firebase 项目，缺少 google-services.json 时不应用相关插件，
+    // 否则构建直接失败。补上该文件后会自动启用。
+    if (File("google-services.json").exists()) {
+        alias(libs.plugins.google.services)
+        alias(libs.plugins.firebase.crashlytics)
+    }
     alias(libs.plugins.baselineprofile)
 }
 
@@ -27,8 +32,8 @@ android {
         applicationId = "cn.losfer.aihub"
         minSdk = 26
         targetSdk = 37
-        versionCode = 206
-        versionName = "1.0.6"
+        versionCode = 207
+        versionName = "1.0.7"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
